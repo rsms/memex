@@ -1,0 +1,24 @@
+# start is the command for starting a new process.
+# It can be an array or string. If it's a string it will be launches as a script in the
+# default shell. If it's an array the first argument is the executable file.
+# Occurances of $(NAME) is replaced with the value of an environment variable NAME.
+# It is an error if a named env variable is not found. For cases when the var may be
+# undefined, you can specify a default value with the syntax $(NAME:defaultvalue).
+start: [./foo.sh, $(LOL:lolnotfound), $(HOME)]
+
+# restart-limit-interval: Minimum amount of time between automatic restarts.
+# This does not apply to explicit restarts or restarts from changes to the config file.
+restart-limit-interval: 10s
+
+# env is an optional dictionary of environment variables to set for new processes.
+# Expansion variables e.g. $(NAME) works here just like they do for command args.
+env:
+  FOO: 123
+  BAR: bar-$(FOO)
+
+# chroot causes the process to be "jailed" to the given directory tree.
+# This only works when the memex service runs in privileged mode.
+# chroot: .
+
+# disabled causes the service to not be run.
+# disabled: true

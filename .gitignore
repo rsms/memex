@@ -1,0 +1,7 @@
+.memex-index
+.DS_Store
+*credentials.ini
+
+/bin
+/_*
+/example-memexdir/twitter/tweets/

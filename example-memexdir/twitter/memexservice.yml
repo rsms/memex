@@ -1,0 +1,5 @@
+start: [$(MEMEX_ROOT)/services/twitter/twitter]
+restart-limit-interval: 10s
+
+# remove or change to false to enable this service
+disabled: true
