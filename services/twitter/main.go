@@ -44,21 +44,6 @@ func onMemexMsg(cmd string, args [][]byte) ([][]byte, error) {
 func main() {
 	defer log.Sync()
 
-	// connect to memex
-	if err := memex.Connect(onMemexMsg); err != nil && err != memex.ErrNoMemex {
-		log.Warn("failed to commect to memex service: %v", err)
-	}
-
-	// test memex IPC
-	if memex.Connected {
-		log.Info("connected to memex service; sending \"ping\" message")
-		res, err := memex.Command("ping", []byte("hello"))
-		if err != nil {
-			panic(err)
-		}
-		log.Info("\"ping\" result from memex service: %q", res)
-	}
-
 	// DATA_DIR
 	if os.Getenv("MEMEX_DIR") != "" {
 		DATA_DIR = filepath.Join(os.Getenv("MEMEX_DIR"), "twitter")
@@ -69,7 +54,6 @@ func main() {
 			panic(err)
 		}
 	}
-	log.Info("DATA_DIR=%q", DATA_DIR)
 
 	// parse CLI flags
 	optDebug := flag.Bool("debug", false, "Enable debug mode")
@@ -84,6 +68,27 @@ func main() {
 	} else {
 		log.RootLogger.EnableFeatures(log.FSyncError)
 	}
+
+	// connect to memex
+	if err := memex.Connect(onMemexMsg); err != nil && err != memex.ErrNoMemex {
+		log.Warn("failed to commect to memex service: %v", err)
+	}
+
+	// test memex IPC
+	if memex.Connected {
+		// disable log prefix
+		log.RootLogger.DisableFeatures(log.FTime | log.FMilliseconds |
+			log.FPrefixDebug | log.FPrefixInfo | log.FPrefixWarn | log.FPrefixError)
+
+		log.Info("connected to memex service; sending \"ping\" message")
+		res, err := memex.Command("ping", []byte("hello"))
+		if err != nil {
+			panic(err)
+		}
+		log.Info("\"ping\" result from memex service: %q", res)
+	}
+
+	log.Info("DATA_DIR=%q", DATA_DIR)
 
 	// configure twitter client
 	tw, err := createTwitterClient("./twitter-credentials.ini")
